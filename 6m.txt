@@ -1,0 +1,69 @@
+fini           !---正常退出处理模块
+/cle           !清除当前数据库
+/prep7         !进入前处理，建立几何模型
+/uis,msgpop,3  !---仅显示错误对话框信息
+
+!--------def--------
+et,1,181      !---定义181单元，其参考号为1
+
+tendond=0.023		!---管道直径
+thick=0.0056    !---牺牲阳极的厚度
+chang=0.008     !---牺牲阳极的长度
+hight=0.216   !---介质高度
+wedth=0.4
+length =0.6   !--介质长度
+distance=0.6   !---阳极间间距
+!-------modeling-----
+
+csys,0			!--tendon，设定总体直角坐标系
+wpcsys,-1   !--将工作平面恢复
+cyl4,0,0,tendond/2,,,,-(distance+chang)  !--建立张力筋圆柱1
+
+wpoffs,,,-distance/2
+cyl4,0,0,tendond/2,,tendond/2+thick,,-chang    !--建立手镯式牺牲阳极1  
+
+
+alls
+cm,a1,volu		!定义上述体为元件a1
+
+csys,0		!--设定总体指教坐标系
+wpcsys,-1	!--将工作平面恢复
+wpave,0,0,0 !移动工作平面
+blc5,0.078,0,hight,wedth,-distance		!--建立长方体
+cmsel,u,a1    !不选择元件a1
+cm,a2,volu    !定义上述体为元件a2
+allsel
+vsbv,a2,a1		!a2减a1
+
+csys,0	     		!--tendon，设定总体直角坐标系
+wpcsys,-1       !--将工作平面恢复
+wprota,0,90,0		!--将工作平面绕其x轴旋转90度
+vsbw,all        !--切分体
+alls				    !--选择所有因素
+vdele,2,,,1			!--删除体2
+vdele,1
+alls
+nummrg,all
+numcmp,all
+
+!---------对牺牲阳极平面进行切割-----
+!csys,0			!--tendon，设定总体直角坐标系
+!wpcsys,-1   !--将工作平面恢复
+!wprota,0,-90,0 
+!wpoffs,,,0.025
+!asbw,all,,keep
+
+!---------mesh---------
+csys,0			!--tendon，设定总体直角坐标系
+wpcsys,-1   !--将工作平面恢复
+alls
+aatt,,,1    !--设置面的单元属性
+
+lplot,all   !--显示线
+alls
+
+
+
+
+3,4,5,8,9,11,12
+1,2,6,7,10
